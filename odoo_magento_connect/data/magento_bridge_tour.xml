@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<odoo>
+    <!-- Making the xmlid of menus required by the Magneto Bridge Module tour available in webclient -->
+    <record id="odoo_magento_connect.menu_sale_dashboard" model="ir.ui.menu">
+<!--        <field name="load_xmlid" eval="True"/>-->
+    </record>
+
+    <record id="odoo_magento_connect.menu_magento_dash" model="ir.ui.menu">
+<!--        <field name="load_xmlid" eval="True"/>-->
+    </record>
+</odoo>

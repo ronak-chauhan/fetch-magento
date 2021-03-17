@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_dashboard_view_kanban" model="ir.ui.view">
+        <field name="name">mob.dashboard.kanban</field>
+        <field name="model">mob.dashboard</field>
+        <field name="arch" type="xml">
+            <kanban create="false"
+                    class="oe_background_grey o_kanban_dashboard o_mob_kanban">
+                <field name="name"/>
+                <field name="color"/>
+                <field name="item_name"/>
+                <field name="active"/>
+                <field name="kanban_dashboard_graph"/>
+                <field name="count_need_sync_product"/>
+                <field name="count_no_sync_product"/>
+                <field name="count_need_sync_category"/>
+                <field name="count_no_sync_category"/>
+                <field name="count_need_invoice"/>
+                <field name="count_need_delivery"/>
+                <field name="count_no_sync_attribute"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_color_1 o_kanban_record"
+                             style="width: 600px; height: 225px;">
+                            <t t-value="record.item_name.raw_value"
+                               t-set="itmetype"/>
+                            <t t-call="MobTop"/>
+                            <div class="container oe_kanban_color_1 o_kanban_card_content o_visible">
+                                <div class="row">
+                                    <t t-if="itmetype == 'category'"
+                                       t-call="MobCategory"/>
+                                    <t t-if="itmetype == 'product'"
+                                       t-call="MobProduct"/>
+                                    <t t-if="itmetype == 'order'"
+                                       t-call="MobOrder"/>
+                                    <t t-if="itmetype == 'partner'"
+                                       t-call="MobPartner"/>
+                                    <t t-if="itmetype == 'attribute'"
+                                       t-call="MobAttribute"/>
+                                    <div t-if="itmetype == 'general' || itmetype == 'situation'"
+                                         class="row">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-name="MobTop">
+                        <div class="o_kanban_card_header">
+                            <div class="o_kanban_card_header_title"
+                                 style="border-bottom: 1px solid grey;">
+                                <div class="o_primary">
+                                    <t t-if="itmetype == 'product'">
+                                        <i class="fa fa-cube"
+                                           modifiers="{}"/>
+                                    </t>
+                                    <t t-if="itmetype == 'order'">
+                                        <i class="fa fa-file-text-o"
+                                           modifiers="{}"/>
+                                    </t>
+                                    <t t-if="itmetype == 'attribute'">
+                                        <i class="fa fa-file-picture-o"
+                                           modifiers="{}"/>
+                                    </t>
+                                    <t t-if="itmetype == 'category'">
+                                        <i class="fa fa-sitemap"
+                                           modifiers="{}"/>
+                                    </t>
+                                    <t t-if="itmetype == 'partner'">
+                                        <i class="fa fa-handshake-o"
+                                           modifiers="{}"/>
+                                    </t>
+                                    <a type="object" name="open_action"
+                                       style="color:black;">
+                                        <field name="name"/>
+                                    </a>
+                                </div>
+                                <div class="o_secondary">
+                                    <field name="instance_id"/>
+                                </div>
+                            </div>
+                            <div style="font-weight: 500; font-size:18px;">
+                                <t t-if="itmetype == 'product'">
+                                    Total Product(s):
+                                </t>
+                                <t t-if="itmetype == 'order'">
+                                    Total Order(s):
+                                </t>
+                                <t t-if="itmetype == 'attribute'">
+                                    Total Attribute(s):
+                                </t>
+                                <t t-if="itmetype == 'category'">
+                                    Total Category(s):
+                                </t>
+                                <t t-if="itmetype == 'partner'">
+                                    Total Partner(s):
+                                </t>
+                            </div>
+                            <div class="o_kanban_manage_button_section"
+                                 t-if="!selection_mode">
+                                <a class="o_kanban_manage_toggle_button"
+                                   href="#">More
+                                    <i class="fa fa-ellipsis-v" role="img"
+                                       aria-label="Manage" title="Manage"/>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="o_kanban_manage_button_section"
+                             t-if="!selection_mode">
+                            <t t-call="MObMoreDashboard"/>
+                        </div>
+                    </t>
+
+                    <t t-name="MObMoreDashboard">
+                        <div class="container o_kanban_card_manage_pane dropdown-menu"
+                             role="menu">
+                            <div class="row ">
+                                <div t-if="(itmetype != 'attribute' and itmetype != 'category')"
+                                     class="col-4 o_kanban_card_manage_section o_kanban_manage_new">
+                                    <div role="menuitem"
+                                         class="o_kanban_card_manage_title">
+                                        <span>View</span>
+                                    </div>
+
+                                    <div t-if="itmetype == 'product'">
+                                        <a type="object"
+                                           name="open_view_rec"
+                                           context="{
+                                        'rec_type': 'config',
+                                        'res_model' : 'magento.product.template',
+                                        }">
+                                            Configurable Products
+                                        </a>
+                                    </div>
+                                    <div t-if="itmetype == 'product'">
+                                        <a type="object"
+                                           name="open_view_rec"
+                                           context="{
+                                        'rec_type': 'simple',
+                                        'res_model' : 'magento.product.template',
+                                        }">
+                                            Simple Products
+                                        </a>
+                                    </div>
+                                    <div t-if="itmetype == 'order'">
+                                        <a type="object"
+                                           name="open_order_view_rec"
+                                           context="{
+                                        'rec_type': 'draft',
+                                        'res_model' : 'wk.order.mapping',
+                                        }">
+                                            Draft Orders
+                                        </a>
+                                    </div>
+                                    <div t-if="itmetype == 'order'">
+                                        <a type="object"
+                                           name="open_order_view_rec"
+                                           context="{
+                                        'rec_type': 'sale',
+                                        'res_model' : 'wk.order.mapping',
+                                        }">
+                                            Confirm Orders
+                                        </a>
+                                    </div>
+                                    <div t-if="itmetype == 'order'">
+                                        <a type="object"
+                                           name="open_order_view_rec"
+                                           context="{
+                                        'rec_type': 'cancel',
+                                        'res_model' : 'wk.order.mapping',
+                                        }">
+                                            Cancel Orders
+                                        </a>
+                                    </div>
+                                    <div t-if="itmetype == 'partner'">
+                                        <a type="object"
+                                           name="open_view_rec"
+                                           context="{
+                                        'rec_type': 'partner',
+                                        'res_model' : 'magento.customers',
+                                        }">
+                                            Partner
+                                        </a>
+                                    </div>
+                                    <div t-if="itmetype == 'partner'">
+                                        <a type="object"
+                                           name="open_view_rec"
+                                           context="{
+                                        'rec_type': 'address',
+                                        'res_model' : 'magento.customers',
+                                        }">
+                                            Partner Address
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="col-4 o_kanban_card_manage_section o_kanban_manage_new">
+                                    <div class="o_kanban_card_manage_title">
+                                        <span>New</span>
+                                    </div>
+                                    <div>
+                                        <a type="object" name="create_new_rec">
+                                            <span t-if="itmetype == 'product'">
+                                                Product
+                                            </span>
+                                            <span t-if="itmetype == 'order'">
+                                                Order
+                                            </span>
+                                            <span t-if="itmetype == 'category'">
+                                                Category
+                                            </span>
+                                            <span t-if="itmetype == 'partner'">
+                                                Partner
+                                            </span>
+                                            <span t-if="itmetype == 'attribute'">
+                                                Product Attribute
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div t-if="(itmetype != 'attribute' and itmetype != 'partner')"
+                                     class="col-4 o_kanban_card_manage_section o_kanban_manage_reports">
+                                    <div class="o_kanban_card_manage_title">
+                                        <span>Reports</span>
+                                    </div>
+                                    <div>
+                                        <a type="object"
+                                           context="{'r_type': 'success'}"
+                                           name="show_report">
+                                            Successful
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <a type="object"
+                                           context="{'r_type': 'unsuccess'}"
+                                           name="show_report">
+                                            Un-Successful
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row o_kanban_card_settings">
+                                <div t-if="widget.editable"
+                                     class="col-xs-6 o_project_kanban_colorpicker"
+                                     style="margin-top:50px">
+                                    <ul class="oe_kanban_colorpicker"
+                                        data-field="color"/>
+                                </div>
+                                <div class="col-xs-6 text-left"
+                                     style="margin-top:50px">
+                                    <a type="object" name="open_configuration">
+                                        Connection
+                                    </a>
+                                    <br/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-name="MobProduct">
+                        <table width="50%">
+                            <tr>
+                                <td style="width:40%;">
+                                    <b>Need To Update :</b>
+                                </td>
+                                <td>
+                                    <t t-if="record.count_need_sync_product.value > -1">
+                                        <button type="object"
+                                                name="action_open_update_records"
+                                                context="{
+                                            'map_model':'magento.product.template',
+                                            }"
+                                                style="position: relative; border-radius: 15%; background-color: black; border: none;"
+                                                class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button">
+                                            <t t-esc="record.count_need_sync_product.value"/>
+                                        </button>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:40%;">
+                                    <b>Need To Export :</b>
+                                </td>
+                                <td>
+                                    <button type="object"
+                                            name="action_open_export_records"
+                                            context="{
+                                        'core_model':'product.template',
+                                        'map_model':'magento.product.template',
+                                        'field_name':'template_name',
+                                        }"
+                                            style="position: relative; border-radius: 15%; background-color: black; border: none;"
+                                            class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button">
+                                        <t t-esc="record.count_no_sync_product.value"/>
+                                    </button>
+                                </td>
+                            </tr>
+
+
+                        </table>
+                        <table width="50%">
+                            <td style="width:20%; background-color:#e0e0d1;">
+
+                            </td>
+                            <td style="height: 100px; width:40%; background-color: #e0e0d1;">
+                                <b>Total Mapped :</b>
+                            </td>
+                            <td style="background-color:#e0e0d1;">
+                                <button class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button"
+                                        modifiers="{}" options="{}"
+                                        type="object"
+                                        name="get_action_mapped_records"
+                                        context="{'map_model':'magento.product.template',}"
+                                        accesskey="1"
+                                        aria-keyshortcuts="Alt+Shift+1"
+                                        style="position: relative; border-radius: 15%; background-color: black; border: none;">
+                                    <field name="count_mapped_records"/>
+                                </button>
+                            </td>
+                        </table>
+                    </t>
+                    <t t-name="MobCategory">
+                        <table width="50%">
+                            <tr>
+                                <td style="width:40%;">
+                                    <b>Need To Update :</b>
+                                </td>
+                                <td>
+                                    <t t-if="record.count_need_sync_category.value > -1">
+                                        <button type="object"
+                                                name="action_open_update_records"
+                                                context="{
+                                        'map_model':'magento.category',
+                                        }"
+                                                style="position: relative; border-radius: 15%; background-color: black; border: none;"
+                                                class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button">
+                                            <t t-esc="record.count_need_sync_category.value"/>
+
+                                        </button>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%;">
+                                    <b>Need To Export :</b>
+                                </td>
+                                <td>
+                                    <t t-if="record.count_no_sync_category.value > -1 ">
+                                        <button type="object"
+                                                context="{
+                                        'core_model':'product.category',
+                                        'map_model':'magento.category',
+                                        'field_name':'cat_name',
+
+                                        }"
+                                                name="action_open_export_records"
+                                                style="position: relative; border-radius: 15%; background-color: black; border: none;"
+                                                class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button">
+                                        <t t-esc="record.count_no_sync_category.value"/>
+
+                                        </button>
+                                    </t>
+                                </td>
+                            </tr>
+                        </table>
+                            <table width="50%">
+                                <tr>
+                                    <td style="height: 100px; width:20%; background-color:#e0e0d1;"></td>
+                                    <td style="height: 100px; width:40%; background-color:#e0e0d1;">
+                                        <b>Total Mapped :</b>
+                                    </td>
+                                    <td style="background-color:#e0e0d1;">
+                                        <button class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button"
+                                                modifiers="{}" options="{}"
+                                                type="object"
+                                                name="get_action_mapped_records"
+                                                context="{'map_model':'magento.category',}"
+                                                accesskey="2"
+                                                aria-keyshortcuts="Alt+Shift+2"
+                                                style="position: relative; border-radius: 15%; background-color: black; border: none;">
+                                            <field name="count_mapped_records"/>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+
+                    </t>
+                    <t t-name="MobOrder">
+                        <!-- On the left -->
+                        <table width="50%">
+                            <tr>
+                                <td style="width:40%;">
+                                    <b>Need To Invoice :</b>
+                                </td>
+                                <td>
+                                    <t t-if="record.count_need_invoice.value > -1">
+                                        <button type="object"
+                                                name="action_open_order_need"
+                                                context="{
+                                        'action':'invoice',
+                                        }"
+                                                style="position: relative; border-radius: 15%; background-color: black; border: none;"
+                                                class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button">
+                                            <t t-esc="record.count_need_invoice.value"/>
+
+                                        </button>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:40%;">
+                                    <b>Need To Deliver :</b>
+                                </td>
+                                <td>
+                                    <t t-if="record.count_need_delivery.value > -1">
+                                        <button type="object"
+                                                name="action_open_order_need"
+                                                context="{
+                                        'action':'delivery',
+                                        }"
+                                                style="position: relative; border-radius: 15%; background-color: black; border: none;"
+                                                class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button">
+                                            <t t-esc="record.count_need_delivery.value"/>
+                                        </button>
+                                    </t>
+                                </td>
+                            </tr>
+                        </table>
+                        <table width="50%">
+                            <tr>
+                                <td style="width:20%; background-color:#e0e0d1;"></td>
+                                <td style="width:40%; background-color:#e0e0d1;">
+                                    <b>Total Mapped :</b>
+                                </td>
+                                <td style="background-color:#e0e0d1;">
+                                    <button class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button"
+                                            modifiers="{}" options="{}"
+                                            type="object"
+                                            name="get_action_mapped_records"
+                                            context="{'map_model':'wk.order.mapping',}"
+                                            accesskey="3"
+                                            aria-keyshortcuts="Alt+Shift+3"
+                                            style="position: relative; border-radius: 15%; background-color: black; border: none;">
+                                        <field name="count_mapped_records"/>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%; background-color:#e0e0d1;"></td>
+                                <td style="width:40%; background-color:#e0e0d1;">
+                                    <b>Total Invoiced :</b>
+                                </td>
+                                <td style="background-color:#e0e0d1;">
+                                    <button class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button"
+                                            modifiers="{}" options="{}"
+                                            type="object"
+                                            name="get_action_prosess_records"
+                                            context="{'action':'invoice',}"
+                                            accesskey="4"
+                                            aria-keyshortcuts="Alt+Shift+4"
+                                            style="position: relative; border-radius: 15%; background-color: black; border: none;">
+                                        <field name="count_invoiced_records"/>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%; background-color:#e0e0d1;"></td>
+                                <td style="width:40%; background-color:#e0e0d1;">
+                                    <b>Total Delivered :</b>
+                                </td>
+                                <td style="background-color:#e0e0d1;">
+                                    <button class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button"
+                                            modifiers="{}" options="{}"
+                                            type="object"
+                                            name="get_action_prosess_records"
+                                            context="{'action':'delivery',}"
+                                            accesskey="5"
+                                            aria-keyshortcuts="Alt+Shift+5"
+                                            style="position: relative; border-radius: 15%; background-color: black; border: none;">
+                                        <field name="count_delivered_records"/>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                    <t t-name="MobPartner">
+                        <table width="50%">
+
+                        </table>
+                        <table width="50%">
+                            <tr>
+                                <td style="height: 100px; width:20%; background-color:#e0e0d1;">
+
+                                </td>
+                                <td style="height: 100px; width:40%; background-color:#e0e0d1;">
+                                    <b>Total Mapped :</b>
+                                </td>
+                                <td style="background-color:#e0e0d1;">
+                                    <button class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button"
+                                            modifiers="{}" options="{}"
+                                            type="object"
+                                            name="get_action_mapped_records"
+                                            context="{'map_model':'magento.customers',}"
+                                            accesskey="6"
+                                            aria-keyshortcuts="Alt+Shift+6"
+                                            style="position: relative; border-radius: 15%; background-color: black; border: none;">
+                                        <field name="count_mapped_records"/>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                    <t t-name="MobAttribute">
+                        <table width="50%">
+                            <tr>
+                                <td style="width:40%; ">
+                                    <b>Need To Export :</b>
+                                </td>
+                                <td>
+                                    <t t-if="record.count_no_sync_attribute.value > -1">
+                                        <button type="object"
+                                                name="action_open_export_records"
+                                                context="{
+                                        'core_model':'product.attribute',
+                                        'map_model':'magento.product.attribute',
+                                        'field_name':'name',
+                                        }"
+                                                style="position: relative; border-radius: 15%; background-color: black; border: none;"
+                                                class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button">
+                                            <t t-esc="record.count_no_sync_attribute.value"/>
+                                        </button>
+                                    </t>
+                                </td>
+                            </tr>
+                            <table width="50%">
+                                <tr>
+                                    <td style="height: 100px; width:20%; background-color:#e0e0d1;"></td>
+                                    <td style="height: 100px; width:40%; background-color:#e0e0d1;">
+                                        <b>Total Mapped :</b>
+                                    </td>
+                                    <td style="background-color:#e0e0d1;">
+                                        <button class="btn btn-primary button_data oe_kanban_action oe_kanban_action_button"
+                                                modifiers="{}" options="{}"
+                                                type="object"
+                                                name="get_action_mapped_records"
+                                                context="{'map_model':'magento.product.attribute',}"
+                                                accesskey="7"
+                                                aria-keyshortcuts="Alt+Shift+7"
+                                                style="position: relative; border-radius: 15%; background-color: black; border: none;">
+                                            <field name="count_mapped_records"/>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </table>
+                        <!-- On the right, show other common informations/actions -->
+                    </t>
+                    <t t-name="MobBarGraph">
+                        <div class="o_kanban_graph_section">
+                            <field name="kanban_dashboard_graph"
+                                   t-att-graph_type="_.contains(['one','two'],itmetype) ? 'line' : 'bar'"
+                                   widget="mob_dashboard_graph"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_sale_dashboard"
+            model="ir.actions.act_window">
+        <field name="name">MOB Dashboard</field>
+        <field name="res_model">mob.dashboard</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="usage">menu</field>
+        <field name="context">{'search_default_dashboard':1}</field>
+        <field name="domain">[('active', '=', True)]</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<odoo>
+
+<!--        <function model="magento.configure" name="mob_upgrade_hook">-->
+<!--             <value model="magento.configure" eval="obj().search([('active', '=', True)])"/>-->
+<!--        </function>-->
+        <!-- After installation of the module, open the related menu -->
+        <record id="action_client_mob_menu" model="ir.actions.client">
+            <field name="name">Open Mob Menu</field>
+            <field name="tag">reload</field>
+            <field name="params" eval="{'menu_id': ref('menu_sale_dashboard')}"/>
+        </record>
+        <record id="base.open_menu" model="ir.actions.todo">
+            <field name="action_id" ref="action_client_mob_menu"/>
+            <field name="state">open</field>
+        </record>
+
+    <record model="ir.cron" id="rsl_order_status">
+        <field name="name">RSL Order Update</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">model.autoCronPostingToRsl()</field>
+    </record>
+
+</odoo>

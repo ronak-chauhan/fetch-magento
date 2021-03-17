@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mob_product_template_form_view" model="ir.ui.view">
+        <field name="name">product.template.form.view.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[@name='inventory']"
+                   position="after">
+<!--            <notebook position="inside">-->
+                <page string="Magento" name="magento">
+                    <separator string="Magento Extra Categories"
+                               colspan="2"/>
+                    <newline/>
+                    <field name="categ_ids" nolabel="1" colspan="2"/>
+                    <separator string="Magento Mapping" colspan="2"/>
+                    <field name="mob_mapping_ids" readonly='1'
+                           nolabel='1'/>
+                </page>
+            </xpath>
+<!--            </notebook>-->
+        </field>
+    </record>
+<!--    <record id="mob_product_product_form_view" model="ir.ui.view">-->
+<!--        <field name="name">product.template.form.view.inherit</field>-->
+<!--        <field name="model">product.product</field>-->
+<!--        <field name="inherit_id" ref="product.product_normal_form_view"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <notebook>-->
+<!--                <xpath expr="//notebook/page=[@name='magento']"-->
+<!--                       position="after">-->
+<!--                    <page string="RSL" name="rsl">-->
+<!--                        <group>-->
+<!--                            <group>-->
+<!--                                <field name="rsl_product_name"-->
+<!--                                       attrs="{'readonly':[('rsl_product_name', '!=',False)]}"/>-->
+<!--                                <field name="rsl_date"/>-->
+<!--                                <field name="rsl_response"/>-->
+<!--                            </group>-->
+<!--                            <button name="create_post_to_rsl" type="object"-->
+<!--                                    string="Sync with Rakuten"-->
+<!--                                    attrs="{'invisible':[('rsl_product_name', '!=',False)]}"-->
+<!--                            />-->
+<!--                        </group>-->
+<!--                    </page>-->
+<!--                </xpath>-->
+<!--            </notebook>-->
+<!--        </field>-->
+<!--    </record>-->
+</odoo>

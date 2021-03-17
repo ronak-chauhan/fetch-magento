@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<odoo>
+    <data noupdate="1">
+
+      <function model="stock.move" name="_stock_def_setting"/>
+
+    </data>
+
+</odoo>

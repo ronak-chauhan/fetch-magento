@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<odoo>
+    <data>
+        <record id="sale_order_form_view_inherited_hide_confirm_btn" model="ir.ui.view">
+            <field name="name">sale.order.form.view.inherited</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <!--<xpath expr="//button[@name='action_quotation_send']"
+                       position="after">
+
+                </xpath> -->
+                <xpath expr="//button[@name='action_confirm'][1]" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('is_magento_order','=', True),('state', 'not in', ['sent'])]}</attribute>
+                    <attribute name="string">Ship</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm'][2]"
+                       position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('is_magento_order','=', True),('state', 'not in', ['draft'])]}</attribute>
+                    <attribute name="string">Ship</attribute>
+                </xpath>
+                <field name="date_order" position="after">
+                    <field name="is_magento_order" />
+                    <field name="is_rsl_enable" invisible="1" />
+                </field>
+                <xpath expr="//notebook" position="inside">
+                    <page string="3PL Shipment Detail"
+                          attrs="{'invisible':[('is_rsl_enable','=',False)]}">
+                        <button name="postToRSL" type="object" string="postToRSL"
+                        attrs="{'invisible':['|',('is_rsl_enable','=',False),('shipment_name','!=',False)]}"/>
+                        <button name="getStatusFromRSL" type="object" string="get Status From RSL"
+                                attrs="{'invisible':[('shipment_name','=',False),('is_rsl_enable','=',False)]}"/>
+
+                        <group>
+                            <field name="shipment_name" readonly="1"/>
+                            <field name="shipment_status" readonly="1"/>
+                            <field name="rsl_error" readonly="1"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
+
